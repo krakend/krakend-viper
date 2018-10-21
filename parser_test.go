@@ -8,9 +8,13 @@ import (
 )
 
 func TestNew_ok(t *testing.T) {
-	configPath := "/tmp/ok.json"
-	configContent := []byte(`{
-    "version": 1,
+	configContents := []struct {
+		format  string
+		path    string
+		content []byte
+	}{
+		{"json", "/tmp/ok.json", []byte(`{
+    "version": 2,
     "name": "My lovely gateway",
     "port": 8080,
     "cache_ttl": 3600,
@@ -73,36 +77,160 @@ func TestNew_ok(t *testing.T) {
             ]
         }
     ]
-}`)
-	if err := ioutil.WriteFile(configPath, configContent, 0644); err != nil {
-		t.FailNow()
+}`)},
+		{"toml", "/tmp/ok.toml", []byte(`version = 2.0
+name = "My lovely gateway"
+port = 8080.0
+cache_ttl = 3600.0
+timeout = "3s"
+
+[[endpoints]]
+endpoint = "/github"
+method = "GET"
+
+  [endpoints.extra_config]
+  user = "test"
+  hits = 6.0
+  parents = [
+    "gomez",
+    "morticia"
+  ]
+
+  [[endpoints.backend]]
+  host = [
+    "https://api.github.com"
+  ]
+  url_pattern = "/"
+  whitelist = [
+    "authorizations_url",
+    "code_search_url"
+  ]
+
+    [endpoints.backend.extra_config]
+    user = "test"
+    hits = 6.0
+    parents = [
+      "gomez",
+      "morticia"
+    ]
+
+[[endpoints]]
+endpoint = "/supu"
+method = "GET"
+concurrent_calls = 3.0
+
+  [[endpoints.backend]]
+  host = [
+    "http://127.0.0.1:8080"
+  ]
+  url_pattern = "/__debug/supu"
+
+[[endpoints]]
+endpoint = "/combination/{id}"
+method = "GET"
+
+  [[endpoints.backend]]
+  group = "first_post"
+  host = [
+    "https://jsonplaceholder.typicode.com"
+  ]
+  url_pattern = "/posts/{id}"
+  blacklist = [
+    "userId"
+  ]
+
+  [[endpoints.backend]]
+  host = [
+    "https://jsonplaceholder.typicode.com"
+  ]
+  url_pattern = "/users/{id}"
+
+    [endpoints.backend.mapping]
+    email = "personal_email"`)},
+		{"yaml", "/tmp/ok.yml", []byte(`version: 2
+name: My lovely gateway
+port: 8080
+cache_ttl: 3600
+timeout: 3s
+endpoints:
+  - endpoint: /github
+    method: GET
+    extra_config:
+      user: test
+      hits: 6
+      parents:
+        - gomez
+        - morticia
+    backend:
+      - host:
+          - 'https://api.github.com'
+        url_pattern: /
+        whitelist:
+          - authorizations_url
+          - code_search_url
+        extra_config:
+          user: test
+          hits: 6
+          parents:
+            - gomez
+            - morticia
+  - endpoint: /supu
+    method: GET
+    concurrent_calls: 3
+    backend:
+      - host:
+          - 'http://127.0.0.1:8080'
+        url_pattern: /__debug/supu
+  - endpoint: '/combination/{id}'
+    method: GET
+    backend:
+      - group: first_post
+        host:
+          - 'https://jsonplaceholder.typicode.com'
+        url_pattern: '/posts/{id}'
+        blacklist:
+          - userId
+      - host:
+          - 'https://jsonplaceholder.typicode.com'
+        url_pattern: '/users/{id}'
+        mapping:
+          email: personal_email
+`)},
 	}
+	for _, configContent := range configContents {
+		t.Run(configContent.format, func(t *testing.T) {
 
-	serviceConfig, err := New().Parse(configPath)
+			if err := ioutil.WriteFile(configContent.path, configContent.content, 0644); err != nil {
+				t.FailNow()
+			}
 
-	if err != nil {
-		t.Error("Unexpected error. Got", err.Error())
-	}
+			serviceConfig, err := New().Parse(configContent.path)
 
-	endpoint := serviceConfig.Endpoints[0]
-	endpointExtraConfiguration := endpoint.ExtraConfig
+			if err != nil {
+				t.Error("Unexpected error. Got", err.Error())
+			}
 
-	if endpointExtraConfiguration != nil {
-		testExtraConfig(endpointExtraConfiguration, t)
-	} else {
-		t.Error("Extra config is not present in EndpointConfig")
-	}
+			endpoint := serviceConfig.Endpoints[0]
+			endpointExtraConfiguration := endpoint.ExtraConfig
 
-	backend := endpoint.Backend[0]
-	backendExtraConfiguration := backend.ExtraConfig
-	if backendExtraConfiguration != nil {
-		testExtraConfig(backendExtraConfiguration, t)
-	} else {
-		t.Error("Extra config is not present in BackendConfig")
-	}
+			if endpointExtraConfiguration != nil {
+				testExtraConfig(endpointExtraConfiguration, t)
+			} else {
+				t.Error("Extra config is not present in EndpointConfig")
+			}
 
-	if err := os.Remove(configPath); err != nil {
-		t.FailNow()
+			backend := endpoint.Backend[0]
+			backendExtraConfiguration := backend.ExtraConfig
+			if backendExtraConfiguration != nil {
+				testExtraConfig(backendExtraConfiguration, t)
+			} else {
+				t.Error("Extra config is not present in BackendConfig")
+			}
+
+			if err := os.Remove(configContent.path); err != nil {
+				t.FailNow()
+			}
+		})
 	}
 }
 func testExtraConfig(extraConfig map[string]interface{}, t *testing.T) {
