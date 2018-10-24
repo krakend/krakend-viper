@@ -13,189 +13,9 @@ func TestNew_ok(t *testing.T) {
 		path    string
 		content []byte
 	}{
-		{"json", "/tmp/ok.json", []byte(`{
-    "version": 2,
-    "name": "My lovely gateway",
-    "port": 8080,
-    "cache_ttl": 3600,
-    "timeout": "3s",
-    "endpoints": [
-        {
-            "endpoint": "/github",
-            "method": "GET",
-            "extra_config" : {"user":"test","hits":6,"parents":["gomez","morticia"]},
-            "backend": [
-                {
-                    "host": [
-                        "https://api.github.com"
-                    ],
-                    "url_pattern": "/",
-                    "whitelist": [
-                        "authorizations_url",
-                        "code_search_url"
-                    ],
-                    "extra_config" : {"user":"test","hits":6,"parents":["gomez","morticia"]}
-                }
-            ]
-        },
-        {
-            "endpoint": "/supu",
-            "method": "GET",
-            "concurrent_calls": 3,
-            "backend": [
-                {
-                    "host": [
-                        "http://127.0.0.1:8080"
-                    ],
-                    "url_pattern": "/__debug/supu"
-                }
-            ]
-        },
-        {
-            "endpoint": "/combination/{id}",
-            "method": "GET",
-            "backend": [
-                {
-                    "group": "first_post",
-                    "host": [
-                        "https://jsonplaceholder.typicode.com"
-                    ],
-                    "url_pattern": "/posts/{id}",
-                    "blacklist": [
-                        "userId"
-                    ]
-                },
-                {
-                    "host": [
-                        "https://jsonplaceholder.typicode.com"
-                    ],
-                    "url_pattern": "/users/{id}",
-                    "mapping": {
-                        "email": "personal_email"
-                    }
-                }
-            ]
-        }
-    ]
-}`)},
-		{"toml", "/tmp/ok.toml", []byte(`version = 2.0
-name = "My lovely gateway"
-port = 8080.0
-cache_ttl = 3600.0
-timeout = "3s"
-
-[[endpoints]]
-endpoint = "/github"
-method = "GET"
-
-  [endpoints.extra_config]
-  user = "test"
-  hits = 6.0
-  parents = [
-    "gomez",
-    "morticia"
-  ]
-
-  [[endpoints.backend]]
-  host = [
-    "https://api.github.com"
-  ]
-  url_pattern = "/"
-  whitelist = [
-    "authorizations_url",
-    "code_search_url"
-  ]
-
-    [endpoints.backend.extra_config]
-    user = "test"
-    hits = 6.0
-    parents = [
-      "gomez",
-      "morticia"
-    ]
-
-[[endpoints]]
-endpoint = "/supu"
-method = "GET"
-concurrent_calls = 3.0
-
-  [[endpoints.backend]]
-  host = [
-    "http://127.0.0.1:8080"
-  ]
-  url_pattern = "/__debug/supu"
-
-[[endpoints]]
-endpoint = "/combination/{id}"
-method = "GET"
-
-  [[endpoints.backend]]
-  group = "first_post"
-  host = [
-    "https://jsonplaceholder.typicode.com"
-  ]
-  url_pattern = "/posts/{id}"
-  blacklist = [
-    "userId"
-  ]
-
-  [[endpoints.backend]]
-  host = [
-    "https://jsonplaceholder.typicode.com"
-  ]
-  url_pattern = "/users/{id}"
-
-    [endpoints.backend.mapping]
-    email = "personal_email"`)},
-		{"yaml", "/tmp/ok.yml", []byte(`version: 2
-name: My lovely gateway
-port: 8080
-cache_ttl: 3600
-timeout: 3s
-endpoints:
-  - endpoint: /github
-    method: GET
-    extra_config:
-      user: test
-      hits: 6
-      parents:
-        - gomez
-        - morticia
-    backend:
-      - host:
-          - 'https://api.github.com'
-        url_pattern: /
-        whitelist:
-          - authorizations_url
-          - code_search_url
-        extra_config:
-          user: test
-          hits: 6
-          parents:
-            - gomez
-            - morticia
-  - endpoint: /supu
-    method: GET
-    concurrent_calls: 3
-    backend:
-      - host:
-          - 'http://127.0.0.1:8080'
-        url_pattern: /__debug/supu
-  - endpoint: '/combination/{id}'
-    method: GET
-    backend:
-      - group: first_post
-        host:
-          - 'https://jsonplaceholder.typicode.com'
-        url_pattern: '/posts/{id}'
-        blacklist:
-          - userId
-      - host:
-          - 'https://jsonplaceholder.typicode.com'
-        url_pattern: '/users/{id}'
-        mapping:
-          email: personal_email
-`)},
+		{"json", "/tmp/ok.json", jsonCfg},
+		{"toml", "/tmp/ok.toml", tomlCfg},
+		{"yaml", "/tmp/ok.yml", yamlCfg},
 	}
 	for _, configContent := range configContents {
 		t.Run(configContent.format, func(t *testing.T) {
@@ -205,7 +25,6 @@ endpoints:
 			}
 
 			serviceConfig, err := New().Parse(configContent.path)
-
 			if err != nil {
 				t.Error("Unexpected error. Got", err.Error())
 			}
@@ -286,3 +105,191 @@ func TestNew_initError(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+var (
+	jsonCfg = []byte(`{
+	"version": 2,
+	"name": "My lovely gateway",
+	"port": 8080,
+	"cache_ttl": 3600,
+	"timeout": "3s",
+	"endpoints": [
+			{
+					"endpoint": "/github",
+					"method": "GET",
+					"extra_config" : {"user":"test","hits":6,"parents":["gomez","morticia"]},
+					"backend": [
+							{
+									"host": [
+											"https://api.github.com"
+									],
+									"url_pattern": "/",
+									"whitelist": [
+											"authorizations_url",
+											"code_search_url"
+									],
+									"extra_config" : {"user":"test","hits":6,"parents":["gomez","morticia"]}
+							}
+					]
+			},
+			{
+					"endpoint": "/supu",
+					"method": "GET",
+					"concurrent_calls": 3,
+					"backend": [
+							{
+									"host": [
+											"http://127.0.0.1:8080"
+									],
+									"url_pattern": "/__debug/supu"
+							}
+					]
+			},
+			{
+					"endpoint": "/combination/{id}",
+					"method": "GET",
+					"backend": [
+							{
+									"group": "first_post",
+									"host": [
+											"https://jsonplaceholder.typicode.com"
+									],
+									"url_pattern": "/posts/{id}",
+									"blacklist": [
+											"userId"
+									]
+							},
+							{
+									"host": [
+											"https://jsonplaceholder.typicode.com"
+									],
+									"url_pattern": "/users/{id}",
+									"mapping": {
+											"email": "personal_email"
+									}
+							}
+					]
+			}
+	]
+}`)
+
+	tomlCfg = []byte(`version = 2.0
+name = "My lovely gateway"
+port = 8080.0
+cache_ttl = 3600.0
+timeout = "3s"
+
+[[endpoints]]
+endpoint = "/github"
+method = "GET"
+
+[endpoints.extra_config]
+user = "test"
+hits = 6.0
+parents = [
+"gomez",
+"morticia"
+]
+
+[[endpoints.backend]]
+host = [
+"https://api.github.com"
+]
+url_pattern = "/"
+whitelist = [
+"authorizations_url",
+"code_search_url"
+]
+
+[endpoints.backend.extra_config]
+user = "test"
+hits = 6.0
+parents = [
+	"gomez",
+	"morticia"
+]
+
+[[endpoints]]
+endpoint = "/supu"
+method = "GET"
+concurrent_calls = 3.0
+
+[[endpoints.backend]]
+host = [
+"http://127.0.0.1:8080"
+]
+url_pattern = "/__debug/supu"
+
+[[endpoints]]
+endpoint = "/combination/{id}"
+method = "GET"
+
+[[endpoints.backend]]
+group = "first_post"
+host = [
+"https://jsonplaceholder.typicode.com"
+]
+url_pattern = "/posts/{id}"
+blacklist = [
+"userId"
+]
+
+[[endpoints.backend]]
+host = [
+"https://jsonplaceholder.typicode.com"
+]
+url_pattern = "/users/{id}"
+
+[endpoints.backend.mapping]
+email = "personal_email"`)
+
+	yamlCfg = []byte(`version: 2
+name: My lovely gateway
+port: 8080
+cache_ttl: 3600
+timeout: 3s
+endpoints:
+  - endpoint: /github
+    method: GET
+    extra_config:
+      user: test
+      hits: 6
+      parents:
+        - gomez
+        - morticia
+    backend:
+      - host:
+          - 'https://api.github.com'
+        url_pattern: /
+        whitelist:
+          - authorizations_url
+          - code_search_url
+        extra_config:
+          user: test
+          hits: 6
+          parents:
+            - gomez
+            - morticia
+  - endpoint: /supu
+    method: GET
+    concurrent_calls: 3
+    backend:
+      - host:
+          - 'http://127.0.0.1:8080'
+        url_pattern: /__debug/supu
+  - endpoint: '/combination/{id}'
+    method: GET
+    backend:
+      - group: first_post
+        host:
+          - 'https://jsonplaceholder.typicode.com'
+        url_pattern: '/posts/{id}'
+        blacklist:
+          - userId
+      - host:
+          - 'https://jsonplaceholder.typicode.com'
+        url_pattern: '/users/{id}'
+        mapping:
+          email: personal_email
+`)
+)
