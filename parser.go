@@ -14,6 +14,7 @@ func New() Parser {
 	return Parser{viper.New()}
 }
 
+// Parser is a config parser using the viper library
 type Parser struct {
 	viper *viper.Viper
 }
@@ -53,5 +54,3 @@ func checkErr(err error, configFile string) error {
 		return config.CheckErr(err, configFile)
 	}
 }
-
-
