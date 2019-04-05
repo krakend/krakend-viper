@@ -1,0 +1,12 @@
+[[constraint]]
+  name = "github.com/devopsfaith/krakend"
+  # version = "0.9.0"
+  branch = "parsing_error"
+
+[[constraint]]
+  name = "github.com/spf13/viper"
+  version = "1.3.2"
+
+[prune]
+  go-tests = true
+  unused-packages = true
