@@ -96,7 +96,13 @@ func TestNew_errorMessages(t *testing.T) {
 			expErr:  "'/tmp/ok.json': json: cannot unmarshal number into Go value of type map[string]interface {}, offset: 2, row: 0, col: 2",
 		},
 		{
-			name: "case6",
+			name:    "case6",
+			path:    "/tmp/ok.json",
+			content: []byte("\r\n42"),
+			expErr:  "'/tmp/ok.json': json: cannot unmarshal number into Go value of type map[string]interface {}, offset: 4, row: 1, col: 2",
+		},
+		{
+			name: "case7",
 			path: "/tmp/ok.json",
 			content: []byte(`{
 	"version": 2,
@@ -104,8 +110,8 @@ func TestNew_errorMessages(t *testing.T) {
 	"port": 8080,
 	"cache_ttl": 3600
 	"timeout": "3s",
-	"endpoints": [
-			{`),
+	"endpoints": []
+}`),
 			expErr: "'/tmp/ok.json': invalid character '\"' after object key:value pair, offset: 83, row: 5, col: 2",
 		},
 	} {
