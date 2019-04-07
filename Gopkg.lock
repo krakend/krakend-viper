@@ -2,8 +2,8 @@
 
 
 [[projects]]
-  branch = "parsing_error"
-  digest = "1:e9d5c7548d1260f9ca6c2e59b94f2cf8d01124b25acde0b7c77435cf4786273f"
+  branch = "master"
+  digest = "1:13fc1f67c0b65fb495cb83d22317d66171464f46ebf448faec0b29906d4bc166"
   name = "github.com/devopsfaith/krakend"
   packages = [
     "config",
@@ -12,7 +12,7 @@
     "register/internal",
   ]
   pruneopts = "UT"
-  revision = "b8a7f786364a97cf58bf5ed64ec2225bdba49f80"
+  revision = "f8b1cbc69da0cbab467d60f2549da6239c0e812a"
 
 [[projects]]
   digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"

@@ -1,7 +1,6 @@
 [[constraint]]
   name = "github.com/devopsfaith/krakend"
-  # version = "0.9.0"
-  branch = "parsing_error"
+  branch = "master"
 
 [[constraint]]
   name = "github.com/spf13/viper"

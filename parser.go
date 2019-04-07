@@ -31,7 +31,7 @@ func (p Parser) Parse(configFile string) (config.ServiceConfig, error) {
 		return cfg, checkErr(err, configFile)
 	}
 	if err := cfg.Init(); err != nil {
-		return cfg, checkErr(err, configFile)
+		return cfg, config.CheckErr(err, configFile)
 	}
 
 	return cfg, nil
