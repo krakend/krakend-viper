@@ -22,6 +22,7 @@ type Parser struct {
 // Parser implements the Parse interface
 func (p Parser) Parse(configFile string) (config.ServiceConfig, error) {
 	p.viper.SetConfigFile(configFile)
+	p.viper.SetEnvPrefix("krakend")
 	p.viper.AutomaticEnv()
 	var cfg config.ServiceConfig
 	if err := p.viper.ReadInConfig(); err != nil {
