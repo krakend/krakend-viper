@@ -2,6 +2,7 @@
 package viper
 
 import (
+	"fmt"
 	"reflect"
 	"unsafe"
 
@@ -31,11 +32,55 @@ func (p Parser) Parse(configFile string) (config.ServiceConfig, error) {
 	if err := p.viper.Unmarshal(&cfg); err != nil {
 		return cfg, checkErr(err, configFile)
 	}
+	cleanupServiceConfig(&cfg)
 	if err := cfg.Init(); err != nil {
 		return cfg, config.CheckErr(err, configFile)
 	}
 
 	return cfg, nil
+}
+
+
+// cleanupServiceConfig make sure ExtraConfig type is map[string]interface{}
+func cleanupServiceConfig(cfg *config.ServiceConfig) {
+	cfg.ExtraConfig = cleanConfigMap(cfg.ExtraConfig)
+	for _, endpoint := range cfg.Endpoints {
+		endpoint.ExtraConfig = cleanConfigMap(endpoint.ExtraConfig)
+
+		for _, backend := range endpoint.Backend {
+			backend.ExtraConfig = cleanConfigMap(backend.ExtraConfig)
+		}
+	}
+}
+
+func cleanConfigMap(cfg map[string]interface{}) map[string]interface{} {
+	for k, v := range cfg {
+		cfg[k] = cleanupMapValue(v)
+	}
+	return cfg
+}
+
+func cleanupMapValue(input interface{}) interface{} {
+	switch data := input.(type) {
+	case []interface{}:
+		for key, value := range data {
+			data[key] = cleanupMapValue(value)
+		}
+		return data
+	case map[string]interface{}:
+		for key, value := range data {
+			data[key] = cleanupMapValue(value)
+		}
+		return data
+	case map[interface{}]interface{}:
+		output := make(map[string]interface{})
+		for key, value := range data {
+			output[fmt.Sprintf("%v", key)] = cleanupMapValue(value)
+		}
+		return output
+	default:
+		return data
+	}
 }
 
 func checkErr(err error, configFile string) error {
