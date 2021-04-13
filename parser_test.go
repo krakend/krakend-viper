@@ -1,6 +1,7 @@
 package viper
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -151,6 +152,38 @@ func testExtraConfig(extraConfig map[string]interface{}, t *testing.T) {
 	if parents[1] != "morticia" {
 		t.Error("Parent 1 of user us not morticia")
 	}
+
+	testExtraNestedConfigKey(extraConfig, t)
+}
+
+func testExtraNestedConfigKey(extraConfig map[string]interface{}, t *testing.T) {
+	namespace := "nested_data"
+	v, ok := extraConfig[namespace]
+	if !ok {
+		return
+	}
+
+	type nestedConfig struct {
+		Data struct{
+			Status string `json:"status"`
+		} `json:"data"`
+	}
+
+	jsonBytes, err := json.Marshal(v)
+	if err != nil {
+		t.Error("marshal nested config key error: ", err.Error())
+		return
+	}
+
+	var cfg nestedConfig
+	if err = json.Unmarshal(jsonBytes, &cfg); err != nil {
+		t.Error("unmarshal nested config key error: ", err.Error())
+		return
+	}
+
+	if cfg.Data.Status != "OK" {
+		t.Errorf("nested config key parse error: %+v\n", cfg)
+	}
 }
 
 func TestNew_unknownFile(t *testing.T) {
@@ -204,7 +237,7 @@ var (
 			{
 					"endpoint": "/github",
 					"method": "GET",
-					"extra_config" : {"user":"test","hits":6,"parents":["gomez","morticia"]},
+					"extra_config" : {"user":"test","hits":6,"parents":["gomez","morticia"], "nested_data": {"data": {"status": "OK"}}},
 					"backend": [
 							{
 									"host": [
@@ -278,6 +311,9 @@ parents = [
 "morticia"
 ]
 
+[endpoints.extra_config.nested_data.data]
+status = "OK"
+
 [[endpoints.backend]]
 host = [
 "https://api.github.com"
@@ -344,6 +380,9 @@ endpoints:
       parents:
         - gomez
         - morticia
+      nested_data:
+        data:
+          status: OK
     backend:
       - host:
           - 'https://api.github.com'
