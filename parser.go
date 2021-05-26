@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/devopsfaith/krakend/config"
+	"github.com/luraproject/lura/config"
 	"github.com/spf13/viper"
 )
 
@@ -39,7 +39,6 @@ func (p Parser) Parse(configFile string) (config.ServiceConfig, error) {
 
 	return cfg, nil
 }
-
 
 // cleanupServiceConfig make sure ExtraConfig type is map[string]interface{}
 func cleanupServiceConfig(cfg *config.ServiceConfig) {
