@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/luraproject/lura/config"
+	"github.com/luraproject/lura/v2/config"
 	"github.com/spf13/viper"
 )
 
