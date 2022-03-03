@@ -106,7 +106,7 @@ func TestNew_errorMessages(t *testing.T) {
 			name: "case7",
 			path: "/tmp/ok.json",
 			content: []byte(`{
-	"version": 2,
+	"version": 3,
 	"name": "My lovely gateway",
 	"port": 8080,
 	"cache_ttl": 3600
@@ -164,7 +164,7 @@ func testExtraNestedConfigKey(extraConfig map[string]interface{}, t *testing.T) 
 	}
 
 	type nestedConfig struct {
-		Data struct{
+		Data struct {
 			Status string `json:"status"`
 		} `json:"data"`
 	}
@@ -218,7 +218,7 @@ func TestNew_initError(t *testing.T) {
 	}
 
 	_, err := New().Parse(wrongConfigPath)
-	if err == nil || err.Error() != "'/tmp/unmarshall.json': Unsupported version: 0 (want: 2)" {
+	if err == nil || err.Error() != "'/tmp/unmarshall.json': unsupported version: 0 (want: 3)" {
 		t.Error("Error expected. Got", err)
 	}
 	if err = os.Remove(wrongConfigPath); err != nil {
@@ -228,7 +228,7 @@ func TestNew_initError(t *testing.T) {
 
 var (
 	jsonCfg = []byte(`{
-	"version": 2,
+	"version": 3,
 	"name": "My lovely gateway",
 	"port": 8080,
 	"cache_ttl": 3600,
@@ -293,7 +293,7 @@ var (
 	]
 }`)
 
-	tomlCfg = []byte(`version = 2.0
+	tomlCfg = []byte(`version = 3.0
 name = "My lovely gateway"
 port = 8080.0
 cache_ttl = 3600.0
@@ -366,7 +366,7 @@ url_pattern = "/users/{id}"
 [endpoints.backend.mapping]
 email = "personal_email"`)
 
-	yamlCfg = []byte(`version: 2
+	yamlCfg = []byte(`version: 3
 name: My lovely gateway
 port: 8080
 cache_ttl: 3600
