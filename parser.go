@@ -20,7 +20,8 @@ type Parser struct {
 	viper *viper.Viper
 }
 
-// Parser implements the Parse interface
+// Parser reads and parses the configFile. The values of the file can be
+// override with envvars, using the KRAKEND_ prefix
 func (p Parser) Parse(configFile string) (config.ServiceConfig, error) {
 	p.viper.SetConfigFile(configFile)
 	p.viper.SetEnvPrefix("krakend")
