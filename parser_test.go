@@ -244,7 +244,7 @@ var (
 											"https://api.github.com"
 									],
 									"url_pattern": "/",
-									"whitelist": [
+									"allow": [
 											"authorizations_url",
 											"code_search_url"
 									],
@@ -275,7 +275,7 @@ var (
 											"https://jsonplaceholder.typicode.com"
 									],
 									"url_pattern": "/posts/{id}",
-									"blacklist": [
+									"deny": [
 											"userId"
 									]
 							},
@@ -319,7 +319,7 @@ host = [
 "https://api.github.com"
 ]
 url_pattern = "/"
-whitelist = [
+allow = [
 "authorizations_url",
 "code_search_url"
 ]
@@ -353,7 +353,7 @@ host = [
 "https://jsonplaceholder.typicode.com"
 ]
 url_pattern = "/posts/{id}"
-blacklist = [
+deny = [
 "userId"
 ]
 
@@ -387,7 +387,7 @@ endpoints:
       - host:
           - 'https://api.github.com'
         url_pattern: /
-        whitelist:
+        allow:
           - authorizations_url
           - code_search_url
         extra_config:
@@ -410,7 +410,7 @@ endpoints:
         host:
           - 'https://jsonplaceholder.typicode.com'
         url_pattern: '/posts/{id}'
-        blacklist:
+        deny:
           - userId
       - host:
           - 'https://jsonplaceholder.typicode.com'
