@@ -1,4 +1,4 @@
-module github.com/devopsfaith/krakend-viper/v2
+module github.com/krakendio/krakend-viper/v2
 
 go 1.17
 
