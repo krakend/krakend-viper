@@ -19,7 +19,6 @@ func TestNew_ok(t *testing.T) {
 	}
 	for _, configContent := range configContents {
 		t.Run(configContent.format, func(t *testing.T) {
-
 			if err := ioutil.WriteFile(configContent.path, configContent.content, 0644); err != nil {
 				t.FailNow()
 			}
