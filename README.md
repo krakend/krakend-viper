@@ -6,7 +6,7 @@ A config parser for the [KrakenD](http://krakend.io/) framework
 
 Import the package
 
-	import "github.com/krakendio/krakend-viper"
+	import "github.com/krakend/krakend-viper"
 
 And you are ready for building a parser and get the config from any format supported by viper
 

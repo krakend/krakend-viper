@@ -1,9 +1,11 @@
-module github.com/krakendio/krakend-viper/v2
+module github.com/krakend/krakend-viper/v2
 
-go 1.17
+go 1.23.0
+
+toolchain go1.24.2
 
 require (
-	github.com/luraproject/lura/v2 v2.0.5
+	github.com/luraproject/lura/v2 v2.11.0
 	github.com/spf13/viper v1.7.1
 )
 
@@ -18,8 +20,8 @@ require (
 	github.com/spf13/jwalterweatherman v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
-	golang.org/x/sys v0.0.0-20211004093028-2c5d950f24ef // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
 	gopkg.in/ini.v1 v1.51.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
