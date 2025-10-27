@@ -2,6 +2,12 @@
 
 A config parser for the [KrakenD](http://krakend.io/) framework
 
+=========================================================================
+
+**THIS PACKAGE HAS BEEN DISCONTINUED, SEE KRAKEND-KOANF FOR ALTERNATIVES**
+
+=========================================================================
+
 ## How to use it
 
 Import the package
